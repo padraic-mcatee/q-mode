@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>q-mode by psaris</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>q-mode</h1>
+        <h2>Emacs mode for editing q scripts and communicating with inferior q/qcon buffers</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/psaris/q-mode/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/psaris/q-mode/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/psaris/q-mode" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="q-mode" class="anchor" href="#q-mode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>q-mode</h1>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<p>q-mode is a major mode for editing q (the language written by <a href="http://www.kx.com'">Kx Systems</a>) in <a href="https://www.gnu.org/software/emacs/">Emacs</a>.</p>
+
+<p>Some of its major features include:</p>
+
+<ul>
+<li>syntax highlighting (font lock),</li>
+<li>interaction with inferior q[con] instance,</li>
+<li>scans declarations and places them in a menu.</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>To load <code>q-mode</code> on-demand, instead of at startup, add this to your
+initialization file</p>
+
+<div class="highlight highlight-source-lisp"><pre>(autoload 'q-mode <span class="pl-s"><span class="pl-pds">"</span>q-mode<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>The add the following to your initialization file to open all .k
+and .q files with q-mode as major mode automatically:</p>
+
+<div class="highlight highlight-source-lisp"><pre>(add-to-list 'auto-mode-alist '(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\\</span>.[kq]<span class="pl-cce">\\</span>'<span class="pl-pds">"</span></span> . q-mode))</pre></div>
+
+<p>If you load ess-mode, it will attempt to associate the .q extension
+with S-mode.  To stop this, add the following lines to your
+initialization file.</p>
+
+<div class="highlight highlight-source-lisp"><pre>(<span class="pl-k">defun</span> <span class="pl-en">remove-ess-q-extn</span> ()
+ (<span class="pl-k">when</span> (assoc <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\\</span>.[qsS]<span class="pl-cce">\\</span>'<span class="pl-pds">"</span></span> auto-mode-alist)
+  (<span class="pl-c1">setq</span> auto-mode-alist
+        (remassoc <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\\</span>.[qsS]<span class="pl-cce">\\</span>'<span class="pl-pds">"</span></span> auto-mode-alist))))
+(add-hook 'ess-mode-hook 'remove-ess-q-extn)
+(add-hook 'inferior-ess-mode-hook 'remove-ess-q-extn)</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Use <code>M-x q</code> to start an inferior q shell. Or use <code>M-x qcon</code> to
+create an inferior qcon shell to communicate with an existing q
+process.  Both can be prefixed with the universal-argument <code>C-u</code> to
+customize the arguments used to start the processes.</p>
+
+<p>The first q[con] session opened becomes the activated buffer.
+To open a new session and send code to the new buffer, it must be
+actived.  Switch to the desired buffer and type <code>C-c M-RET</code> to
+activate it.</p>
+
+<p>The following commands are available to interact with an inferior
+q[con] process/buffer. <code>C-c C-l</code> sends a single line, <code>C-c C-f</code>
+sends the surrounding function, <code>C-c C-r</code> sends the selected region
+and <code>C-c C-b</code> sends the whole buffer.  If the source file exists on
+the same machine as the q process, <code>C-c M-l</code> can be used to load
+the file associated with the active buffer.</p>
+
+<h2>
+<a id="customization" class="anchor" href="#customization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Customization</h2>
+
+<p><code>M-x customize-group</code> can be used to customize the <code>q</code> group.
+Specifically, the <code>inferior-q-program-name</code> and
+<code>inferior-qcon-program-name</code> variables can be changed depending on
+your environment.</p>
+
+<p>Q-mode indents each level based on <code>q-indent-step</code>.  To indent code
+based on {}-, ()-, and []-groups instead of equal width tabs, you
+can set this value to nil.</p>
+
+<p>The variables <code>q-msg-prefix</code> and <code>q-msg-postfix</code> can be customized
+to prefix and postfix every msg sent to the inferior q[con]
+process. This can be used to change directories before evaluating
+definitions within the q process and then changing back to the root
+directory. To make the variables change values depending on which
+file they are sent from, values can be defined in a single line a
+the top of each .q file:</p>
+
+<pre lang="q"><code>/ -*- q-msg-prefix: "system \"d .jnp\";"; q-msg-postfix: ";system \"d .\"";-*-
+</code></pre>
+
+<p>or at the end:</p>
+
+<pre lang="q"><code>/ Local Variables:
+/ q-msg-prefix: "system \"d .jnp\";"
+/ q-msg-postfix: ";system \"d .\""
+/ End:
+</code></pre>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
