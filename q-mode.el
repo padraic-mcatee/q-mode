@@ -110,7 +110,7 @@
 
 (defgroup q nil "Major mode for editing q code" :group 'languages)
 
-(defcustom q-program "q"
+(defcustom q-program "k"
   "Program name for invoking an inferior q."
   :type 'file
   :group 'q)
@@ -286,7 +286,7 @@ to read the command line arguments from the minibuffer."
       (setq args (list buffer "q" command nil switches))
       (setq process (get-buffer-process (apply 'comint-exec args)))
 
-      (setq comint-input-ring-file-name "~/.q_history")
+      (setq comint-input-ring-file-name "~/.k_history")
       (comint-read-input-ring t)
       (set-process-sentinel process 'q-process-sentinel))
     (q-activate-buffer (buffer-name buffer))
