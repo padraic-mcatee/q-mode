@@ -110,7 +110,7 @@
 
 (defgroup q nil "Major mode for editing q code" :group 'languages)
 
-(defcustom q-program "k"
+(defcustom q-program "/opt/k"
   "Program name for invoking an inferior q."
   :type 'file
   :group 'q)
